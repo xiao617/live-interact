@@ -1,0 +1,154 @@
+openapi: 3.0.0
+info:
+  title: API spec of Live interact platform
+  description: Some API spec of x for handling data transfer between frontend and backend
+  version: 0.0.1
+servers:
+  - url: http://localhost:8888/v1
+    description: API endpoint of backend
+paths:
+  /login:
+    post:
+      tags:
+        - "login username"
+      summary: login user data to db
+      description: login user data to db, and get id of user
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: string
+              properties:
+                filename:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AAPI"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/responses/BadRequest"
+
+components:
+  schemas:
+    ProductSuite:
+      type: object
+      properties:
+        aapis:
+          type: array
+          description: The simpleied aapi structure
+          items:
+            properties:
+              subject:
+                type: string
+              aapiOwner:
+                type: string
+              description:
+                type: string
+              productSuite:
+                type: string
+                description: The productSuite of this AAPI
+              product:
+                type: string
+                description: The product of this AAPI
+      required:
+        - aapis
+    AAPI:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The ID of this AAPI
+        title:
+          type: string
+          description: The title of this AAPI, ps
+        description:
+          type: string
+          description: The description of this AAPI
+        productSuite:
+          type: string
+          description: The productSuite of this AAPI, ps
+        product:
+          type: string
+          description: The product of this AAPI, ps
+        subject:
+          type: string
+          description: The subject (channel) of this AAPI
+        aapiOwner:
+          type: string
+          description: The own of this AAPI, ps
+        doc:
+          type: string
+          description: Async AAPI YAML string of this AAPI
+        doc_json:
+          type: string
+          description: Async API in JSON format of this API
+        subscribers:
+          type: array
+          description: The subscribers of this AAPI
+          items:
+            $ref: "#/components/schemas/Subscriber"
+        comment:
+          type: string
+          description: The comment of this AAPI
+        status:
+          type: string
+          description: The status of this AAPI (on, off)
+        createdAt:
+          type: string
+          format: date-time
+          description: create time of this AAPI
+          example: "2021-06-08T07:17:40.541Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: update time of this AAPI
+          example: "2021-06-08T07:17:40.541Z"
+      required:
+        - name, aapiOwner, doc, productSuite
+    Subscriber:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of this AAPI
+    # Schema for error response body
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+      required:
+        - code
+        - msg
+  responses:
+    BadRequest:
+      description: Request is invalid (include invalid JSON data or invalid fields)
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"

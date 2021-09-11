@@ -1,22 +1,29 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
-import {Layout, Menu, Breadcrumb,Modal} from 'antd';
+import {Layout, Menu, Breadcrumb,Modal, Button,Input} from 'antd';
 import { userBody } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
-import { selectUser} from './../features/user/userSlice';
+import { selectUser,userLogin} from './../features/user/userSlice';
+import { UserOutlined } from '@ant-design/icons';
+import { NodeService } from '../service/nodeService';
+
 export default function MainPage(){
     const dispatch = useAppDispatch();
     const user:userBody = useAppSelector(selectUser);
     const {Header,Content,Footer} = Layout;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [inputName,setInputName] = useState<string>("");
+    const nodeService = new NodeService();
+
     function checkUserState(){
         if(user.status === "visitor")
         {
             setIsModalVisible(true);
         }
     }
-    const hideModal = () =>{
+    async function hideModal(){
         setIsModalVisible(false);
+        await nodeService.postUser(inputName).then((e)=>(dispatch(userLogin(e))))
     }
     useEffect(()=>{
         checkUserState();
@@ -27,25 +34,30 @@ export default function MainPage(){
             <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                <Menu.Item key="1">nav 1</Menu.Item>
-                <Menu.Item key="2">nav 2</Menu.Item>
-                <Menu.Item key="3">nav 3</Menu.Item>
+                <Menu.Item key="1">{user.name}</Menu.Item>
             </Menu>
             </Header>
             <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
             <Breadcrumb style={{ margin: '16px 0' }}>
                 <Breadcrumb.Item>Home</Breadcrumb.Item>
-                <Breadcrumb.Item>List</Breadcrumb.Item>
                 <Breadcrumb.Item>App</Breadcrumb.Item>
             </Breadcrumb>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
-                {user.status}
+                
             </div>
-            <Modal title="Login" visible={isModalVisible} onCancel={hideModal}>
-
+            <Modal title="Login" 
+            visible={isModalVisible} 
+            onCancel={hideModal}
+            footer={[
+                <Button key="submit" type="primary" onClick={hideModal}>
+                    Submit
+                </Button>
+            ]}
+            >
+                <Input size="middle" placeholder="輸入姓名" prefix={<UserOutlined />} onChange={(e)=>(setInputName(e.target.value))} />
             </Modal>
             </Content>
-            <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+            <Footer style={{ textAlign: 'center' }}>Live Interact</Footer>
         </Layout>
     );
 }

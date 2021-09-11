@@ -6,6 +6,13 @@ import { store } from './app/store';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import MainPage from './pages/MainPage';
+import { MockServer } from './service/MockServer';
+
+const environment = process.env.NODE_ENV;
+
+if (environment !== 'production') {
+  MockServer({environment});
+}
 
 ReactDOM.render(
   <React.StrictMode>
