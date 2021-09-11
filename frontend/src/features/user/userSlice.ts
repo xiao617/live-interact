@@ -23,6 +23,7 @@ export const userSlice = createSlice({
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.status = 'user';
+            
         }
     }
 });

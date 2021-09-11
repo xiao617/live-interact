@@ -7,6 +7,8 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 import MainPage from './pages/MainPage';
 import { MockServer } from './service/MockServer';
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import CreateRoom from './pages/CreateRoom';
 
 const environment = process.env.NODE_ENV;
 
@@ -17,7 +19,13 @@ if (environment !== 'production') {
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <MainPage />
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={MainPage}></Route>
+          <Route exact path="/create-room" component={CreateRoom}></Route>
+        </Switch>
+      </BrowserRouter>
+      
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

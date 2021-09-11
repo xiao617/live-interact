@@ -1,11 +1,12 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
-import {Layout, Menu, Breadcrumb,Modal, Button,Input} from 'antd';
+import {Layout, Menu, Breadcrumb,Modal, Button,Input,Row,Col} from 'antd';
 import { userBody } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser,userLogin} from './../features/user/userSlice';
 import { UserOutlined } from '@ant-design/icons';
 import { NodeService } from '../service/nodeService';
+import {Link} from "react-router-dom";
 
 export default function MainPage(){
     const dispatch = useAppDispatch();
@@ -13,6 +14,7 @@ export default function MainPage(){
     const {Header,Content,Footer} = Layout;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inputName,setInputName] = useState<string>("");
+    const [inputRoom,setInputRoom] = useState<string>("");
     const nodeService = new NodeService();
 
     function checkUserState(){
@@ -24,6 +26,9 @@ export default function MainPage(){
     async function hideModal(){
         setIsModalVisible(false);
         await nodeService.postUser(inputName).then((e)=>(dispatch(userLogin(e))))
+    }
+    async function sumbitRoom(){
+
     }
     useEffect(()=>{
         checkUserState();
@@ -43,7 +48,25 @@ export default function MainPage(){
                 <Breadcrumb.Item>App</Breadcrumb.Item>
             </Breadcrumb>
             <div className="site-layout-background" style={{ padding: 24, minHeight: 380 }}>
-                
+                <Row>
+                    <Col span={8}></Col>
+                    <Col span={8}>Enter Room: 
+                        <Input size="middle" placeholder="輸入代號" onChange={(e)=>(setInputRoom(e.target.value))} onPressEnter={sumbitRoom}/>
+                    </Col>
+                    <Col span={8}></Col>
+                </Row>
+                <br />
+                <Row>
+                    <Col span={8}></Col>
+                    <Col span={8}>  
+                        <Link to={{ pathname:"/create-room" ,state:{user:user} }}>
+                            <Button block>
+                                Create Room
+                            </Button>
+                        </Link>
+                    </Col>
+                    <Col span={8}></Col>
+                </Row>
             </div>
             <Modal title="Login" 
             visible={isModalVisible} 
