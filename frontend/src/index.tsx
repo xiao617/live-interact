@@ -9,6 +9,7 @@ import MainPage from './pages/MainPage';
 import { MockServer } from './service/MockServer';
 import {BrowserRouter, Route, Switch} from "react-router-dom";
 import CreateRoom from './pages/CreateRoom';
+import QuestionRoom from './pages/QuestionRoom';
 
 const environment = process.env.NODE_ENV;
 
@@ -23,6 +24,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={MainPage}></Route>
           <Route exact path="/create-room" component={CreateRoom}></Route>
+          <Route path="/question-room/:roomId" component={QuestionRoom}></Route>
         </Switch>
       </BrowserRouter>
       

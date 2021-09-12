@@ -23,11 +23,15 @@ export const userSlice = createSlice({
             state.id = action.payload.id;
             state.name = action.payload.name;
             state.status = 'user';
+            state.score = 0;
             
+        },
+        getUser: (state) => {
+            return {id:state.id,name:state.name,status:state.status,score:state.score};
         }
     }
 });
 
-export const {userLogin} = userSlice.actions;
+export const {userLogin,getUser} = userSlice.actions;
 export const selectUser = (state: RootState) => state.user;
 export default userSlice.reducer;

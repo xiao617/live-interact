@@ -11,6 +11,8 @@ import {Link} from "react-router-dom";
 export default function MainPage(){
     const dispatch = useAppDispatch();
     const user:userBody = useAppSelector(selectUser);
+    //const emptyUser = {id:'',name:'',score:0,status:'visitor'} as userBody;
+    //const user:userBody = state.location.state.user ?? emptyUser;
     const {Header,Content,Footer} = Layout;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [inputName,setInputName] = useState<string>("");
@@ -28,7 +30,7 @@ export default function MainPage(){
         await nodeService.postUser(inputName).then((e)=>(dispatch(userLogin(e))))
     }
     async function sumbitRoom(){
-
+        window.location.pathname = `/question-room/${inputRoom}`;
     }
     useEffect(()=>{
         checkUserState();
@@ -38,8 +40,10 @@ export default function MainPage(){
         <Layout>
             <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
             <div className="logo" />
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+            <Menu theme="dark" mode="horizontal">
                 <Menu.Item key="1">{user.name}</Menu.Item>
+                <Menu.Item key="2">個人總覽</Menu.Item>
+                
             </Menu>
             </Header>
             <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>
@@ -51,7 +55,10 @@ export default function MainPage(){
                 <Row>
                     <Col span={8}></Col>
                     <Col span={8}>Enter Room: 
-                        <Input size="middle" placeholder="輸入代號" onChange={(e)=>(setInputRoom(e.target.value))} onPressEnter={sumbitRoom}/>
+                        <Input size="middle" placeholder="輸入代號" onChange={(e)=>(setInputRoom(e.target.value))}/>
+                        <Link to={{pathname:"/question-room/"+inputRoom}}>
+                            <Button>Go</Button>
+                        </Link>
                     </Col>
                     <Col span={8}></Col>
                 </Row>
@@ -59,7 +66,7 @@ export default function MainPage(){
                 <Row>
                     <Col span={8}></Col>
                     <Col span={8}>  
-                        <Link to={{ pathname:"/create-room" ,state:{user:user} }}>
+                        <Link to={{ pathname:"/create-room"  }}>
                             <Button block>
                                 Create Room
                             </Button>
