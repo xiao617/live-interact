@@ -13,7 +13,7 @@ export class NodeService {
     async postRoom(problemList: Array<questionBody>, user: userBody){
         const roomId = this.getRandomKey(8);
         const res = await axios.post('/v1/rooms',{
-            owner: user,
+            owner: user.id,
             roomId: roomId,
             questions: problemList
         });
@@ -23,6 +23,12 @@ export class NodeService {
     {
         const res = await axios.get(`/v1/rooms/${roomId}`);
         
+        return res.data.rooms;
+    }
+    async getAllOwnRooms(user:userBody)
+    {
+        const userId = user.id??"";
+        const res = await axios.get(`/v1/owner-rooms/${userId}`);
         return res.data.rooms;
     }
     async updateRoom(roomInfo: roomBody)

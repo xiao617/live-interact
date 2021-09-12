@@ -15,7 +15,7 @@ export type questionBody = {
     choices: Array<optionBody>;
 }
 export type roomBody = {
-    owner: userBody;
+    owner: string;
     questions: Array<questionBody>;
     roomId: string;
     id?: string;

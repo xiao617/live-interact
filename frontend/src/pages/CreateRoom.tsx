@@ -78,7 +78,9 @@ export default function CreateRoom(){
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" >
                 <Menu.Item key="1">{user.name}</Menu.Item>
-                <Menu.Item key="2">個人總覽</Menu.Item>
+                <Link to={{pathname:"/dashboard"}}>
+                    <Menu.Item key="2">個人總覽</Menu.Item>
+                </Link>
                 <Link to={{pathname:"/"}}>
                     <Menu.Item key="3">首頁</Menu.Item>
                 </Link>

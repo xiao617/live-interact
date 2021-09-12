@@ -36,6 +36,11 @@ export function MockServer({ environment = "development" }) {
         //let roomInfo = schema.where("room",)
         return roomInfo;
       })
+      this.get("/v1/owner-rooms/:userId",(schema,request) => {
+        let userId = request.params.userId;
+        let roomsInfo = schema.where("room",{owner:userId});
+        return roomsInfo;
+      })
       this.put("/v1/rooms/:id",(schema,request) => {
         let id = request.params.id;
         let attrs = JSON.parse(request.requestBody);

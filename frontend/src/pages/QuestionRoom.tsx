@@ -23,7 +23,7 @@ export default function QuestionRoom(){
     const {TabPane} = Tabs;
     const [questionAns,setQuestionAns] = useState<optionBody>(emptyChoice);
     const [problemList,setProblemList] = useState<Array<questionBody>>([]);
-    const emptyRoom = {roomId:"",questions:[],owner:user} as roomBody;
+    const emptyRoom = {roomId:"",questions:[],owner:user.id} as roomBody;
     const [roomInfo,setRoomInfo] = useState<roomBody>(emptyRoom);
     const [canResponse,setCanResponse] = useState(false);
     const nodeService = new NodeService();
@@ -94,7 +94,9 @@ export default function QuestionRoom(){
             <div className="logo" />
             <Menu theme="dark" mode="horizontal" >
                 <Menu.Item key="1">{user.name}</Menu.Item>
-                <Menu.Item key="2">個人總覽</Menu.Item>
+                <Link to={{pathname:"/dashboard"}}>
+                    <Menu.Item key="2">個人總覽</Menu.Item>
+                </Link>
                 <Link to={{pathname:"/"}}>
                     <Menu.Item key="3">首頁</Menu.Item>
                 </Link>
