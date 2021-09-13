@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
 import {Layout, Menu, Breadcrumb,Modal, Button,Input,Row,Col,Card, Tabs,Tag} from 'antd';
-import { userBody,optionBody,questionBody,roomBody } from '../types/typeObject';
+import { userBody,optionBody,questionBody,roomBody,userState } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser,userLogin,getUser} from './../features/user/userSlice';
 import { UserOutlined } from '@ant-design/icons';
@@ -11,7 +11,8 @@ import {Link} from "react-router-dom";
 
 export default function Dashboard(){
     const dispatch = useAppDispatch();
-    const user:userBody = useAppSelector(state => state.user);
+    //const user:userBody = useAppSelector(state => state.user);
+    const user:userState = useAppSelector(selectUser);
     //const userRedux = dispatch(getUser());
     //const user:userBody = state.location.state.user;
     const [allOwnerRooms,setAllOwnerRooms] = useState<Array<roomBody>>([]);
@@ -28,7 +29,7 @@ export default function Dashboard(){
             <TabPane tab={tabHeader} key={ind}>
                 <h2>Question: {roomInfo.questions[0].question}</h2>
                 <h3>Answer:</h3>
-                {roomInfo.questions[0].choices.map((e,i)=>(choiceTemplate(e,i)))}
+                {roomInfo.questions === undefined?"":roomInfo.questions[0].choices.map((e,i)=>(choiceTemplate(e,i)))}
             </TabPane>
         )
     }

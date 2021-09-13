@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
 import {Layout, Menu, Breadcrumb,Modal, Button,Input,Row,Col,Card} from 'antd';
-import { userBody,optionBody,questionBody,roomBody } from '../types/typeObject';
+import { userBody,optionBody,questionBody,roomBody,userState } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser,userLogin,getUser} from './../features/user/userSlice';
 import { UserOutlined } from '@ant-design/icons';
@@ -11,7 +11,8 @@ import {Link} from "react-router-dom";
 
 export default function CreateRoom(){
     const dispatch = useAppDispatch();
-    const user:userBody = useAppSelector(state => state.user);
+    const user:userState = useAppSelector(selectUser);
+    //const user:userBody = useAppSelector(state => state.user);
     //const userRedux = dispatch(getUser());
     //const user:userBody = state.location.state.user;
     const {Header,Content,Footer} = Layout;

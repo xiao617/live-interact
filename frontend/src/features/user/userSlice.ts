@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-
+import {userBody} from './../../types/typeObject';
 export interface UserState {
     name: string;
     id: string;
@@ -19,8 +19,8 @@ export const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers:{
-        userLogin: (state,action: PayloadAction<UserState>) => {
-            state.id = action.payload.id;
+        userLogin: (state,action: PayloadAction<userBody>) => {
+            state.id = action.payload._id??"";
             state.name = action.payload.name;
             state.status = 'user';
             state.score = 0;

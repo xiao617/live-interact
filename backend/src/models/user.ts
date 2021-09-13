@@ -2,9 +2,6 @@ import { model, Schema } from 'mongoose';
 import { IUser } from '../types/user';
 const userSchema:Schema = new Schema(
     {
-        id: {
-            type: String
-        },
         name: {
             type: String,
             default: ""
@@ -22,4 +19,4 @@ const userSchema:Schema = new Schema(
         timestamps: true
     }
 )
-export default model<IUser>('user',userSchema)
+export default model<IUser>('User',userSchema)

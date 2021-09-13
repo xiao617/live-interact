@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
 import {Layout, Menu, Breadcrumb,Modal, Button,Input,Row,Col,Card,List,Tabs,Radio,Space} from 'antd';
-import { userBody,optionBody,questionBody,roomBody,paramBody } from '../types/typeObject';
+import { userBody,optionBody,questionBody,roomBody,paramBody,userState } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser,userLogin,getUser} from './../features/user/userSlice';
 import { UserOutlined } from '@ant-design/icons';
@@ -16,7 +16,8 @@ export default function QuestionRoom(){
     const emptyChoice:optionBody = {id:"",option:"",selectedList:[]};
     const dispatch = useAppDispatch();
     //const user:userBody = useAppSelector(selectUser);
-    const user:userBody = useAppSelector(state => state.user);
+    //const user:userBody = useAppSelector(state => state.user);
+    const user:userState = useAppSelector(selectUser);
     //const userRedux = dispatch(getUser());
     //const user:userBody = state.location.state.user;
     const {Header,Content,Footer} = Layout;
@@ -118,7 +119,7 @@ export default function QuestionRoom(){
                             
                         </Tabs>
                         <br />
-                        <Button onClick={submitAns}>Submit</Button>
+                        <Button onClick={submitAns} disabled={canResponse}>Submit</Button>
                     </Col>
                     <Col span={3}></Col>
                 </Row>

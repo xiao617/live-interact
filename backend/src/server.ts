@@ -1,6 +1,10 @@
-import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
-import { Server, IncomingMessage, ServerResponse } from 'http'
-import { establishConnection } from './plugins/mongoose'
+import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import { Server, IncomingMessage, ServerResponse } from 'http';
+import { establishConnection } from './plugins/mongoose';
+import fastifyStatic from 'fastify-static';
+import { UserRouter } from './routes/user';
+import { RoomRouter } from './routes/room';
+import path from 'path';
  
 const server: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
     logger: { prettyPrint: true }
@@ -15,10 +19,12 @@ const startFastify: (port: number) => FastifyInstance<Server, IncomingMessage, S
         establishConnection()
     })
    
- 
-    server.get('/ping', async (request: FastifyRequest, reply: FastifyReply) => {
-        return reply.status(200).send({ msg: 'pong' })
-    })
+    server.register(UserRouter,{prefix:'/v1'});
+    server.register(RoomRouter,{prefix:'/v1'});
+    server.register(fastifyStatic, {
+        root: path.join(__dirname, '../../frontend/build'),
+        prefix: '/'
+      })
  
     return server
 }

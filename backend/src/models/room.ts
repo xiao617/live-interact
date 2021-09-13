@@ -3,14 +3,11 @@ import { IRoom } from '../types/room';
 
 const roomSchema:Schema = new Schema(
     {
-        id: {
-            type: String
-        },
         roomId: {
             type: String,
             default: ""
         },
-        question: {
+        questions: {
             type: Array,
             default: []
         },

@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import 'antd/dist/antd.css';
 import {Layout, Menu, Breadcrumb,Modal, Button,Input,Row,Col} from 'antd';
-import { userBody } from '../types/typeObject';
+import { userBody,userState } from '../types/typeObject';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser,userLogin} from './../features/user/userSlice';
 import { UserOutlined } from '@ant-design/icons';
@@ -10,7 +10,7 @@ import {Link} from "react-router-dom";
 
 export default function MainPage(){
     const dispatch = useAppDispatch();
-    const user:userBody = useAppSelector(selectUser);
+    const user:userState = useAppSelector(selectUser);
     //const emptyUser = {id:'',name:'',score:0,status:'visitor'} as userBody;
     //const user:userBody = state.location.state.user ?? emptyUser;
     const {Header,Content,Footer} = Layout;

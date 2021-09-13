@@ -1,11 +1,11 @@
 import { userBody } from "./user"
 export type optionBody = {
-    readonly id:string;
+    readonly _id:string;
     readonly option: string;
     readonly selectedList: Array<userBody>;
 }
 export interface IOption{
-    id:string;
+    _id:string;
     option: string;
     selectedList: Array<userBody>;
 }
