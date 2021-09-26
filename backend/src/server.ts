@@ -2,6 +2,7 @@ import fastify, { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import { Server, IncomingMessage, ServerResponse } from 'http';
 import { establishConnection } from './plugins/mongoose';
 import fastifyStatic from 'fastify-static';
+import fastifyCors from 'fastify-cors';
 import { UserRouter } from './routes/user';
 import { RoomRouter } from './routes/room';
 import path from 'path';
@@ -18,7 +19,7 @@ const startFastify: (port: number) => FastifyInstance<Server, IncomingMessage, S
         }
         establishConnection()
     })
-   
+    server.register(fastifyCors,{})
     server.register(UserRouter,{prefix:'/v1'});
     server.register(RoomRouter,{prefix:'/v1'});
     server.register(fastifyStatic, {

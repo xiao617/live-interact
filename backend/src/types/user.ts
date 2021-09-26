@@ -9,4 +9,6 @@ export interface IUser{
     _id?: string;
     score: number;
     status: string;
+    password: string
+    verification_code: string
 }

@@ -8,8 +8,28 @@ const UserRouter = (server: FastifyInstance, opts: RouteShorthandOptions, done: 
     server.post('/login',opts,async (request,reply) =>{
         try{
             const userInfo:IUser = request.body as IUser;
-            const res = await userRepo.postUser(userInfo);
-            return reply.status(200).send({user:res});
+            if(userInfo.verification_code !== "tsmc21.10")
+            {
+                return reply.status(204).send();
+            }
+            const checkUserAvailable = await userRepo.checkUser(userInfo);
+            console.log(checkUserAvailable);
+            if(checkUserAvailable === "can_create")//check register
+            {
+                const res = await userRepo.postUser(userInfo);
+                console.log(res);
+                return reply.status(200).send({user:res});
+            }
+            else if(checkUserAvailable === "login_success")
+            {
+                const res = await userRepo.getUser(userInfo);
+                const ares = {name:res?.name,_id:res?._id}
+                return reply.status(200).send({user:ares});
+            }
+            else{
+                return reply.status(204)
+            }
+            
         }
         catch(e){
             console.error(`POST /user Error: ${e}`);

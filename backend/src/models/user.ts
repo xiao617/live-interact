@@ -13,7 +13,15 @@ const userSchema:Schema = new Schema(
         score: {
             type: Number,
             default: 0
-        }
+        },
+        password: {
+            type: String,
+            default: ""
+        },
+        verification_code:{
+            type: String,
+            default: ""
+        },
     },
     {
         timestamps: true
