@@ -17,6 +17,7 @@ const RoomRouter = (server: FastifyInstance, opts: RouteShorthandOptions, done: 
         try{
             const roomId = request.params.roomId;
             const res = await roomRepo.getRoomByRoomId(roomId);
+            
             return reply.status(200).send({rooms:res});
         }
         catch(e){

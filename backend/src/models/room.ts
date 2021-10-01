@@ -14,6 +14,14 @@ const roomSchema:Schema = new Schema(
         owner: {
             type: String,
             default: ""
+        },
+        roomName:{
+            type: String,
+            default: ""
+        },
+        roomPassword: {
+            type: String,
+            default: ""
         }
     },
     {

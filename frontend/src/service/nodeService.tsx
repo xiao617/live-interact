@@ -18,9 +18,11 @@ export class NodeService {
     const respn = {result: true,name: userData.name,_id:res.data.user._id } as responseBody
     return respn
   }
-  async postRoom(problemList: Array<questionBody>, userid: string) {
+  async postRoom(problemList: Array<questionBody>, userid: string,roomName: string,roomPass:string) {
     const roomId = this.getRandomKey(8)
     const res = await axios.post(this.domain_url+'/v1/rooms', {
+      roomName: roomName,
+      roomPassword: roomPass,
       owner: userid,
       roomId: roomId,
       questions: problemList,
@@ -55,5 +57,10 @@ export class NodeService {
       result += randomChars.charAt(Math.floor(Math.random() * randomChars.length))
     }
     return result
+  }
+  getColorRandomList(length: number)
+  {
+    const colorList = ["#ff6666","#ff9900","#00cc00","#1ac6ff","#3366ff","#ff00ff","#993366","#993333","#cc3300","#336600"];
+    return colorList.slice(0,length);
   }
 }

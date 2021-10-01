@@ -6,6 +6,8 @@ import fastifyCors from 'fastify-cors';
 import { UserRouter } from './routes/user';
 import { RoomRouter } from './routes/room';
 import path from 'path';
+import fastifyIO from 'fastify-socket.io';
+import { SocketRouter } from './routes/socket';
  
 const server: FastifyInstance<Server, IncomingMessage, ServerResponse> = fastify({
     logger: { prettyPrint: true }
@@ -20,12 +22,20 @@ const startFastify: (port: number) => FastifyInstance<Server, IncomingMessage, S
         establishConnection()
     })
     server.register(fastifyCors,{})
+    server.register(fastifyIO,{
+        cors:{
+            origin:"*"
+        }
+    })
+    // server.register(fastifyStatic, {
+    //     root: path.join(__dirname, '../../frontend/build'),
+    //     prefix: '/'
+    //   })
+    
+    server.register(SocketRouter,{})
     server.register(UserRouter,{prefix:'/v1'});
     server.register(RoomRouter,{prefix:'/v1'});
-    server.register(fastifyStatic, {
-        root: path.join(__dirname, '../../frontend/build'),
-        prefix: '/'
-      })
+    
  
     return server
 }

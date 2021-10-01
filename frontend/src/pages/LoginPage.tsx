@@ -65,7 +65,6 @@ export default function LoginPage() {
         <div className="logo" />
         <Menu theme="dark" mode="horizontal">
           <Menu.Item key="1"></Menu.Item>
-          
         </Menu>
       </Header>
       <Content className="site-layout" style={{ padding: '0 50px', marginTop: 64 }}>

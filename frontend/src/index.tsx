@@ -12,6 +12,7 @@ import CreateRoom from './pages/CreateRoom'
 import QuestionRoom from './pages/QuestionRoom'
 import Dashboard from './pages/Dashboard'
 import LoginPage from './pages/LoginPage'
+import ControlRoom from './pages/ControlRoom'
 
 const environment = process.env.NODE_ENV
 
@@ -28,6 +29,7 @@ ReactDOM.render(
           <Route exact path="/create-room" component={CreateRoom}></Route>
           <Route exact path="/login" component={LoginPage}></Route>
           <Route path="/question-room/:roomId" component={QuestionRoom}></Route>
+          <Route path="/control-room/:roomId" component={ControlRoom}></Route>
           <Route exact path="/dashboard" component={Dashboard}></Route>
         </Switch>
       </BrowserRouter>

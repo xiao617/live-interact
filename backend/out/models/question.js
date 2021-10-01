@@ -12,6 +12,10 @@ var questionSchema = new mongoose_1.Schema({
     choices: {
         type: Array,
         default: []
+    },
+    isActive: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true

@@ -13,6 +13,14 @@ var roomSchema = new mongoose_1.Schema({
     owner: {
         type: String,
         default: ""
+    },
+    roomName: {
+        type: String,
+        default: ""
+    },
+    roomPassword: {
+        type: String,
+        default: ""
     }
 }, {
     timestamps: true

@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import 'antd/dist/antd.css'
 import { Layout, Menu, Breadcrumb, Modal, Button, Input, Row, Col, Card, Tabs, Tag } from 'antd'
 import { userBody, optionBody, questionBody, roomBody, userState } from '../types/typeObject'
+import { DataTable } from 'primereact/datatable';
+import {Column} from 'primereact/column';
 import { useAppSelector, useAppDispatch } from './../app/hooks'
 import { selectUser, userLogin, getUser } from './../features/user/userSlice'
 import { UserOutlined } from '@ant-design/icons'
 import { NodeService } from '../service/nodeService'
 import { store } from './../app/store'
 import { Link } from 'react-router-dom'
+import Slider from '@ant-design/react-slick';
 
 export default function Dashboard() {
   // const dispatch = useAppDispatch()
@@ -18,15 +21,16 @@ export default function Dashboard() {
   const username = sessionStorage.getItem('username') ?? "";
   const userid = sessionStorage.getItem('userid') ?? "";
   const [allOwnerRooms, setAllOwnerRooms] = useState<Array<roomBody>>([])
+  const [selectRoom,setSelectRoom] = useState<roomBody>()
   const { Header, Content, Footer } = Layout
   const { TabPane } = Tabs
 
   const nodeService = new NodeService()
   async function getUserRoom() {
-    await nodeService.getAllOwnRooms(userid).then((e) => setAllOwnerRooms(e))
+    await nodeService.getAllOwnRooms(userid).then((e) => {setAllOwnerRooms(e); console.log(e)})
   }
   function checkUserState() {
-    if (username === null) {
+    if (username === "") {
       window.location.pathname = '/login';
     }
   }
@@ -56,13 +60,18 @@ export default function Dashboard() {
   const selectorTemplate = (user: userBody) => {
     return <Tag>{user.name}</Tag>
   }
+  async function enterRoomControl(e:roomBody){
+    
+    window.location.pathname = `/control-room/${e.roomId}`;
+    
+  }
   const onLogout = () => {
     sessionStorage.clear();
     console.log('Logout !');
     window.location.pathname = '/login';
   }
   useEffect(() => {
-    console.log(username)
+    console.log(username,userid)
     checkUserState()
     //console.log(userRedux);
     getUserRoom()
@@ -92,7 +101,10 @@ export default function Dashboard() {
             <Col span={6}></Col>
             <Col span={3}></Col>
             <Col span={12}>
-              <Tabs>{allOwnerRooms.map((e, i) => roomTemplate(e, i))}</Tabs>
+              <DataTable value={allOwnerRooms} selectionMode="single" onSelectionChange={(e)=>(enterRoomControl(e.value))}>
+                <Column field="roomId" header="房間 ID:"></Column>
+                <Column field="roomName" header="房間名稱:"></Column>
+              </DataTable>
             </Col>
             <Col span={3}></Col>
           </Row>

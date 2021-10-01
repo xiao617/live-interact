@@ -5,15 +5,10 @@ import {
   Menu,
   Breadcrumb,
   Modal,
-  Button,
-  Input,
+  Button as antButton,
   Row,
   Col,
-  Card,
-  List,
   Tabs,
-  Radio,
-  Space,
 } from 'antd'
 import {
   userBody,
@@ -21,6 +16,8 @@ import {
   questionBody,
   roomBody,
   paramBody,
+  chartInfoBody,
+  chartBody,
   userState,
 } from '../types/typeObject'
 import { useAppSelector, useAppDispatch } from './../app/hooks'
@@ -30,8 +27,12 @@ import { NodeService } from '../service/nodeService'
 import { store } from './../app/store'
 import { Link, useParams } from 'react-router-dom'
 import {io} from 'socket.io-client'
+import { DataTable } from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import {Button} from 'primereact/button';
+import {Chart} from 'primereact/chart';
 
-export default function QuestionRoom() {
+export default function ControlRoom() {
   //let {roomId} = useParams();
   const roomId: string = useParams<paramBody>()['roomId']
   //const  roomId = "";
@@ -42,6 +43,7 @@ export default function QuestionRoom() {
   // const user: userState = useAppSelector(selectUser)
   //const userRedux = dispatch(getUser());
   //const user:userBody = state.location.state.user;
+  const [questionVisiable,setQuestionVisiable] = useState<boolean>(false);
   const socket = io("127.0.0.1:8888",{
     
   })
@@ -51,73 +53,113 @@ export default function QuestionRoom() {
   const { TabPane } = Tabs
   const [questionAns, setQuestionAns] = useState<optionBody>(emptyChoice)
   const [problemList, setProblemList] = useState<Array<questionBody>>([])
+  
   const emptyRoom = { roomId: '', questions: [], owner: userid ,roomName:"",roomPassword:""} as roomBody
+  const emptyQuestion = { id: "",question: "",isActive:false,choices:[]} as questionBody
+  const emptyChartInfo = {data:[],backgroundColor:[],hoverBackgroundColor:[]} as chartInfoBody
+  const emptyChart = {labels:[],datasets:[]} as chartBody
+  const [nowQuestion,setNowQuestion] = useState<questionBody>(emptyQuestion)
   const [roomInfo, setRoomInfo] = useState<roomBody>(emptyRoom)
+  const [nowChart,setNowChart] = useState<chartBody>(emptyChart)
   const [canResponse, setCanResponse] = useState(false)
   const nodeService = new NodeService()
-
+  const lightOptions = {
+    plugins: {
+        legend: {
+            labels: {
+                color: '#495057'
+            }
+        }
+    }
+};
   function checkUserState() {
     if (username === null) {
       window.location.pathname = '/login';
     }
   }
-  const previewTemplate = (problem: questionBody, ind: number) => {
-    console.log(problem)
-    const tabIndx = `Q${ind + 1}`
+  const getChoiceLabel = (choices: Array<optionBody>) => {
+    let res= new Array<string>();
+    choices.forEach((e)=>(res.push(e.option)))
+    return res;
+  }
+  const problemState = (q:questionBody) => {
+    console.log(q);
     return (
-      <TabPane tab={tabIndx} key={ind}>
-        <h4>Question: {problem.question}</h4>
-        <Radio.Group onChange={(e) => setQuestionAns(e.target.value)}>
-          <Space direction="vertical">{problem.choices.map((e, i) => choiceTemplate(e, i))}</Space>
-        </Radio.Group>
-      </TabPane>
+      <div>
+        <Button className="p-button-secondary" icon={"pi pi-lock-open"} onClick={(e)=>{
+          
+          socket.emit('question-active',q,roomId);
+          console.log('click');
+          setNowQuestion(q);
+          const colorList = nodeService.getColorRandomList(q.choices.length);
+          const chartInfoInit = {
+            data: new Array(q.choices.length).fill(0),
+            backgroundColor: colorList,
+            hoverBackgroundColor: colorList
+          }
+          const chartInit = {
+            labels: getChoiceLabel(q.choices),
+            datasets: [chartInfoInit]
+          }
+          setNowChart(chartInit);
+          setQuestionVisiable(true);
+          console.log(chartInit)
+        }}></Button>
+      </div>
     )
   }
-  const choiceTemplate = (choice: optionBody, ind: number) => {
-    return (
-      <Radio value={choice} disabled={canResponse}>
-        {choice.option}
-      </Radio>
-    )
-  }
+//   const chartData = {
+//     labels: ['A', 'B', 'C'],
+//     datasets: [
+//         {
+//             data: [0, 0, 0],
+//             backgroundColor: [
+//                 "#FF6384",
+//                 "#36A2EB",
+//                 "#FFCE56"
+//             ],
+//             hoverBackgroundColor: [
+//                 "#FF6384",
+//                 "#36A2EB",
+//                 "#FFCE56"
+//             ]
+//         }]
+// };
   const onLogout = () => {
     sessionStorage.clear();
     console.log('Logout !');
     window.location.pathname = '/login';
   }
-  async function getRoomInfo() {
-    await nodeService.getRoom(roomId).then((e) => {
-      if (e.length > 0) {
-        setRoomInfo(e[0])
-      }
-    })
+  const onCancelModal = () => {
+    setQuestionVisiable(false);
   }
-  async function submitToDB() {
-    await nodeService.updateRoom(roomInfo)
-    setCanResponse(true)
+  const choiceTemplate = (e: optionBody) => {
+    return (<li>{e.option}</li>);
   }
-  async function submitAns() {
-    const indChoice = parseInt(questionAns.id) ?? -1
-    console.log(indChoice)
-    if (indChoice !== -1) {
-      //roomInfo.questions[0].choices[indChoice].selectedList.push(user)
-      setRoomInfo(roomInfo)
-    }
-    await submitToDB()
-
-    //console.log(questionAns);
-  }
+  
   useEffect(() => {
     console.log(username)
     console.log(roomId)
     checkUserState()
-    // getRoomInfo()
     socket.on("connect",()=>{
-      socket.emit("visit-room",roomId,userid)
+      socket.emit("check-room",roomId,userid)
     });
-    socket.on(`room-active-${roomId}`,(msg)=>{
-      console.log(msg,"from room-active")
+    socket.on("get-room",(msg:roomBody)=>{
+      try{
+        console.log(msg)
+        setRoomInfo(msg)
+      }
+      catch(e){
+        console.error(e);
+      }
+      
     })
+    socket.on("hello",(msg:any)=>{
+        console.log(msg)
+    })
+    
+    
+
     //console.log(userRedux);
   }, [])
   return (
@@ -145,14 +187,22 @@ export default function QuestionRoom() {
             <Col span={6}></Col>
             <Col span={3}></Col>
             <Col span={12}>
-              <Tabs>{roomInfo.questions.map((e, i) => previewTemplate(e, i))}</Tabs>
-              <br />
-              <Button onClick={submitAns} disabled={canResponse}>
-                Submit
-              </Button>
+              <DataTable value={roomInfo.questions}>
+                <Column field="question" header="問題："></Column>
+                <Column body={problemState}></Column>
+              </DataTable>
             </Col>
             <Col span={3}></Col>
           </Row>
+        </div>
+        <div>
+          <Modal visible={questionVisiable} title="Active Question" onCancel={onCancelModal} footer={[]}>
+            <h4>{nowQuestion.question}</h4>
+            <ul>
+              {nowQuestion.choices.map((e) => (choiceTemplate(e)))}
+            </ul>
+            <Chart type="doughnut" data={nowChart} options={lightOptions} style={{ position: 'relative', width: '40%' }} />
+          </Modal>
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>Live Interact</Footer>

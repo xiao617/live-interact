@@ -13,6 +13,10 @@ const questionSchema:Schema = new Schema(
         choices: {
             type: Array,
             default: []
+        },
+        isActive: {
+            type: Boolean,
+            default: false
         }
     },
     {

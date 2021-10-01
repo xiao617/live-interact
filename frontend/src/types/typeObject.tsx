@@ -9,17 +9,21 @@ export type userBody = {
 export type optionBody = {
   id: string
   option: string
+  isAnswer: boolean
   selectedList: Array<userBody>
 }
 export type questionBody = {
-  id?: string
+  id: string
   question: string
+  isActive: boolean
   choices: Array<optionBody>
 }
 export type roomBody = {
   owner: string
   questions: Array<questionBody>
   roomId: string
+  roomName: string
+  roomPassword: string
   _id?: string
 }
 export type paramBody = {
@@ -36,4 +40,13 @@ export type responseBody = {
   result: boolean
   name: string
   _id: string
+}
+export type chartBody = {
+  labels: Array<string>
+  datasets: Array<chartInfoBody>
+}
+export type chartInfoBody = {
+  data: Array<number>
+  backgroundColor: Array<string>
+  hoverBackgroundColor: Array<string>
 }
