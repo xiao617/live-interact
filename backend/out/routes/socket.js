@@ -78,6 +78,14 @@ var SocketRouter = function (server, opts, done) {
                 console.log('activate', activeQuestion, "to", roomId);
                 socket.broadcast.emit("room-active-" + roomId, activeQuestion);
             });
+            socket.on("question-disactive", function (roomId) {
+                console.log('disactive', roomId);
+                socket.broadcast.emit("room-disactive-" + roomId, "close");
+            });
+            socket.on("question-response", function (roomId, ans) {
+                console.log(roomId, ans);
+                socket.broadcast.emit("control-room-" + roomId, parseInt(ans));
+            });
             socket.on("c1r", function (msg) {
                 try {
                     console.log("SERVER MSG: ", msg);

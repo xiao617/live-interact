@@ -44,6 +44,14 @@ const SocketRouter = (server: FastifyInstance, opts: RouteShorthandOptions, done
                 console.log('activate',activeQuestion,"to",roomId);
                 socket.broadcast.emit(`room-active-${roomId}`,activeQuestion);
             })
+            socket.on("question-disactive",(roomId:string)=>{
+                console.log('disactive',roomId);
+                socket.broadcast.emit(`room-disactive-${roomId}`,"close");
+            })
+            socket.on("question-response",(roomId:string,ans:string)=>{
+                console.log(roomId,ans);
+                socket.broadcast.emit(`control-room-${roomId}`,parseInt(ans));
+            })
             socket.on("c1r",(msg)=>{
                 try{
                     

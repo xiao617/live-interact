@@ -51,6 +51,9 @@ export default function QuestionRoom() {
   const { TabPane } = Tabs
   const [questionAns, setQuestionAns] = useState<optionBody>(emptyChoice)
   const [problemList, setProblemList] = useState<Array<questionBody>>([])
+  const emptyQuestion = { id: "",question: "",isActive:false,choices:[]} as questionBody
+  const [nowQuestion,setNowQuestion] = useState<questionBody>(emptyQuestion)
+  const [questionVisible,setQuestionVisible] = useState<boolean>(false);
   const emptyRoom = { roomId: '', questions: [], owner: userid ,roomName:"",roomPassword:""} as roomBody
   const [roomInfo, setRoomInfo] = useState<roomBody>(emptyRoom)
   const [canResponse, setCanResponse] = useState(false)
@@ -61,21 +64,10 @@ export default function QuestionRoom() {
       window.location.pathname = '/login';
     }
   }
-  const previewTemplate = (problem: questionBody, ind: number) => {
-    console.log(problem)
-    const tabIndx = `Q${ind + 1}`
+  
+  const choiceTemplate = (choice: optionBody) => {
     return (
-      <TabPane tab={tabIndx} key={ind}>
-        <h4>Question: {problem.question}</h4>
-        <Radio.Group onChange={(e) => setQuestionAns(e.target.value)}>
-          <Space direction="vertical">{problem.choices.map((e, i) => choiceTemplate(e, i))}</Space>
-        </Radio.Group>
-      </TabPane>
-    )
-  }
-  const choiceTemplate = (choice: optionBody, ind: number) => {
-    return (
-      <Radio value={choice} disabled={canResponse}>
+      <Radio value={choice}>
         {choice.option}
       </Radio>
     )
@@ -92,20 +84,11 @@ export default function QuestionRoom() {
       }
     })
   }
-  async function submitToDB() {
-    await nodeService.updateRoom(roomInfo)
-    setCanResponse(true)
-  }
+  
   async function submitAns() {
-    const indChoice = parseInt(questionAns.id) ?? -1
-    console.log(indChoice)
-    if (indChoice !== -1) {
-      //roomInfo.questions[0].choices[indChoice].selectedList.push(user)
-      setRoomInfo(roomInfo)
-    }
-    await submitToDB()
-
-    //console.log(questionAns);
+    console.log(questionAns);
+    socket.emit(`question-response`,roomId,questionAns.id);
+    setCanResponse(true);
   }
   useEffect(() => {
     console.log(username)
@@ -116,7 +99,13 @@ export default function QuestionRoom() {
       socket.emit("visit-room",roomId,userid)
     });
     socket.on(`room-active-${roomId}`,(msg)=>{
-      console.log(msg,"from room-active")
+      console.log(msg,"from room-active");
+      setNowQuestion(msg);
+      setQuestionVisible(true);
+      setCanResponse(false);
+    })
+    socket.on(`room-disactive-${roomId}`,(msg) => {
+      setQuestionVisible(false);
     })
     //console.log(userRedux);
   }, [])
@@ -145,14 +134,25 @@ export default function QuestionRoom() {
             <Col span={6}></Col>
             <Col span={3}></Col>
             <Col span={12}>
-              <Tabs>{roomInfo.questions.map((e, i) => previewTemplate(e, i))}</Tabs>
-              <br />
-              <Button onClick={submitAns} disabled={canResponse}>
-                Submit
-              </Button>
+              <Card title={"Room: "+roomId} >
+              </Card>
+              
+              
             </Col>
             <Col span={3}></Col>
           </Row>
+        </div>
+        <div>
+          <Modal visible={questionVisible} title="Active Question"  footer={[
+            <Button onClick={submitAns} disabled={canResponse}>Sumbit</Button>
+          ]}>
+            <h4>{nowQuestion.question}</h4>
+            <Radio.Group onChange={(e)=>(setQuestionAns(e.target.value))}>
+              {nowQuestion.choices.map((e)=>(choiceTemplate(e)))}
+            </Radio.Group>
+              
+            
+          </Modal>
         </div>
       </Content>
       <Footer style={{ textAlign: 'center' }}>Live Interact</Footer>

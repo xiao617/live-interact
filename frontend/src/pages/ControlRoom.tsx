@@ -53,7 +53,7 @@ export default function ControlRoom() {
   const { TabPane } = Tabs
   const [questionAns, setQuestionAns] = useState<optionBody>(emptyChoice)
   const [problemList, setProblemList] = useState<Array<questionBody>>([])
-  
+  const [totalVote,setTotalVote] = useState<number>(0);
   const emptyRoom = { roomId: '', questions: [], owner: userid ,roomName:"",roomPassword:""} as roomBody
   const emptyQuestion = { id: "",question: "",isActive:false,choices:[]} as questionBody
   const emptyChartInfo = {data:[],backgroundColor:[],hoverBackgroundColor:[]} as chartInfoBody
@@ -104,6 +104,7 @@ export default function ControlRoom() {
           setNowChart(chartInit);
           setQuestionVisiable(true);
           console.log(chartInit)
+          setTotalVote(0);
         }}></Button>
       </div>
     )
@@ -132,6 +133,7 @@ export default function ControlRoom() {
   }
   const onCancelModal = () => {
     setQuestionVisiable(false);
+    socket.emit('question-disactive',roomId);
   }
   const choiceTemplate = (e: optionBody) => {
     return (<li>{e.option}</li>);
@@ -158,7 +160,16 @@ export default function ControlRoom() {
         console.log(msg)
     })
     
-    
+    socket.on(`control-room-${roomId}`,(ans)=>{
+      console.log(ans,"control-room");
+      if(questionVisiable === true)
+      {
+        nowChart.datasets[0].data[ans]++;
+        setNowChart(nowChart);
+        console.log(nowChart);
+        setTotalVote(totalVote+1);
+      }
+    })
 
     //console.log(userRedux);
   }, [])
@@ -197,10 +208,11 @@ export default function ControlRoom() {
         </div>
         <div>
           <Modal visible={questionVisiable} title="Active Question" onCancel={onCancelModal} footer={[]}>
-            <h4>{nowQuestion.question}</h4>
+            <h3>{nowQuestion.question}</h3>
             <ul>
               {nowQuestion.choices.map((e) => (choiceTemplate(e)))}
             </ul>
+            <h4>Total Vote: {totalVote}</h4>
             <Chart type="doughnut" data={nowChart} options={lightOptions} style={{ position: 'relative', width: '40%' }} />
           </Modal>
         </div>
